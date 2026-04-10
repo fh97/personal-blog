@@ -65,6 +65,12 @@ jobs:
 
           kill $SERVER_PID || true
 
+          # 修复绝对路径链接，补全 /personal-blog 子路径前缀
+          find ./public -name "*.html" | xargs sed -i \
+            -e 's|href="/"|href="/personal-blog/"|g' \
+            -e 's|href="/post/|href="/personal-blog/post/|g' \
+            -e 's|href="/?tag=|href="/personal-blog/?tag=|g'
+
           touch ./public/.nojekyll
 
           echo "=== Generated files ==="
