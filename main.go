@@ -2,18 +2,33 @@
 // Use of this source code is governed by a xxx
 // license that can be found in the LICENSE file.
 
-// Package main is special.  It defines a
-// standalone executable program, not a library.
-// Within package main the function main is also
-// special—it’s where execution of the program begins.
-// Whatever main does is what the program does.
+// Package main is the entry point for the personal blog server.
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/http"
+	"path/filepath"
+	"runtime"
+
+	"icode.baidu.com/baidu/personal-code/fullStack/handler"
 )
 
-// main the function where execution of the program begins
+// main starts the blog HTTP server on :8080.
 func main() {
-	fmt.Println("Hello, World!")
+	_, filename, _, _ := runtime.Caller(0)
+	root := filepath.Dir(filename)
+
+	postsDir := filepath.Join(root, "content", "posts")
+	templatesDir := filepath.Join(root, "templates")
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", handler.IndexHandler(postsDir, templatesDir))
+	mux.HandleFunc("/post/", handler.PostHandler(postsDir, templatesDir))
+
+	addr := ":8080"
+	log.Printf("博客启动，访问 http://localhost%s", addr)
+	if err := http.ListenAndServe(addr, mux); err != nil {
+		log.Fatalf("服务器启动失败: %v", err)
+	}
 }

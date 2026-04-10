@@ -1,0 +1,85 @@
+{{template "base.html" .}}
+
+{{define "title"}}{{.Title}} - 博客{{end}}
+
+{{define "content"}}
+<!-- Top nav bar -->
+<nav class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+        <a href="/"
+           class="flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-purple-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+            返回首页
+        </a>
+        <span class="text-gray-200">|</span>
+        <span class="text-sm text-gray-400 truncate max-w-xs">{{.Title}}</span>
+    </div>
+</nav>
+
+<!-- Article -->
+<main class="max-w-3xl mx-auto px-4 py-12">
+    <article>
+        <!-- Header -->
+        <header class="mb-10">
+            <!-- Tags -->
+            {{if .Tags}}
+            <div class="flex flex-wrap gap-2 mb-4">
+                {{range .Tags}}
+                <a href="/?tag={{.}}"
+                   class="inline-block px-3 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-full hover:bg-indigo-100 transition-colors tracking-wide">
+                    # {{.}}
+                </a>
+                {{end}}
+            </div>
+            {{end}}
+
+            <!-- Title -->
+            <h1 class="text-4xl font-extrabold text-gray-900 leading-tight mb-4 tracking-tight">{{.Title}}</h1>
+
+            <!-- Meta line -->
+            <div class="flex items-center gap-4 text-sm text-gray-400">
+                <span class="flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <time>{{.Date.Format "2006-01-02"}}</time>
+                </span>
+            </div>
+
+            <!-- Divider -->
+            <div class="mt-8 h-px bg-gradient-to-r from-indigo-200 via-purple-200 to-transparent"></div>
+        </header>
+
+        <!-- Post content -->
+        <div class="prose max-w-none">
+            {{.Content}}
+        </div>
+
+        <!-- Footer actions -->
+        <div class="mt-16 pt-8 border-t border-gray-100 flex items-center justify-between">
+            <a href="/"
+               class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-full transition-colors shadow-md shadow-indigo-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                回到首页
+            </a>
+            <div class="flex flex-wrap gap-2">
+                {{range .Tags}}
+                <a href="/?tag={{.}}"
+                   class="text-xs text-indigo-500 hover:text-purple-600 transition-colors">
+                    # {{.}}
+                </a>
+                {{end}}
+            </div>
+        </div>
+    </article>
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-gray-100 mt-8 py-8 text-center text-sm text-gray-400">
+    <p>Powered by Go &amp; Tailwind CSS · <a href="/" class="hover:text-indigo-500 transition-colors">首页</a></p>
+</footer>
+{{end}}
