@@ -26,7 +26,7 @@ func main() {
 	mux.HandleFunc("/", handler.IndexHandler(postsDir, templatesDir))
 	mux.HandleFunc("/post/", handler.PostHandler(postsDir, templatesDir))
 
-	addr := ":8080"
+	addr := ":8300"
 	log.Printf("博客启动，访问 http://localhost%s", addr)
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatalf("服务器启动失败: %v", err)
