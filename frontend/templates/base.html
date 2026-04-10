@@ -133,8 +133,8 @@
     let mpIdx = 0, mpLooping = false, mpOpen = false;
     const audio = document.getElementById('mp-audio');
 
-    // 页面加载后预加载第一首，等待用户首次交互后自动播放
-    window.addEventListener('DOMContentLoaded', () => { mpLoad(0); });
+    // script 在 body 底部，DOM 已就绪，直接预加载第一首
+    mpLoad(0);
     let mpAutoPlayed = false;
     document.addEventListener('click', () => {
         if (!mpAutoPlayed) {
