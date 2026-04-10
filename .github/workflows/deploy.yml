@@ -35,29 +35,42 @@ jobs:
         run: |
           ./blog-server &
           SERVER_PID=$!
-          sleep 3
+
+          # 等待服务就绪，最多 15 秒
+          for i in $(seq 1 15); do
+            if curl -sf http://localhost:8300/ > /dev/null 2>&1; then
+              echo "Server is ready after ${i}s"
+              break
+            fi
+            echo "Waiting for server... ${i}s"
+            sleep 1
+          done
 
           mkdir -p ./public
 
-          # 抓取首页和各标签页
-          wget --mirror --convert-links --adjust-extension \
-               --page-requisites --no-parent \
-               --no-host-directories \
-               --directory-prefix=./public \
-               http://localhost:8300/ || true
+          # 抓取首页
+          curl -sf http://localhost:8300/ > ./public/index.html
+
+          # 抓取各标签页
+          for tag in Go Git "工程效能" "最佳实践" "版本控制"; do
+            encoded=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$tag'))")
+            curl -sf "http://localhost:8300/?tag=${encoded}" > "./public/index-tag-${tag}.html" || true
+          done
 
           # 抓取所有文章详情页
+          mkdir -p ./public/post
           for slug in build-blog-with-go spec-driven-development go-error-handling git-knowledge-guide; do
-            wget --convert-links --adjust-extension \
-                 --no-host-directories \
-                 --directory-prefix=./public \
-                 http://localhost:8300/post/$slug || true
+            curl -sf "http://localhost:8300/post/${slug}" > "./public/post/${slug}.html" || true
           done
 
           kill $SERVER_PID || true
 
           # 创建 .nojekyll 防止 GitHub Pages 忽略下划线开头的目录
           touch ./public/.nojekyll
+
+          # 输出文件大小，便于 debug
+          echo "=== Generated files ==="
+          find ./public -name "*.html" | xargs wc -l 2>/dev/null
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
