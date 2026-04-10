@@ -65,6 +65,10 @@ jobs:
 
           kill $SERVER_PID || true
 
+          # 拷贝静态资源（favicon 等）
+          cp favicon.png ./public/favicon.png
+          cp apple-touch-icon.png ./public/apple-touch-icon.png
+
           # 修复绝对路径链接，补全 /personal-blog 子路径前缀
           find ./public -name "*.html" | xargs sed -i \
             -e 's|href="/"|href="/personal-blog/"|g' \
