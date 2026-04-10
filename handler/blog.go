@@ -57,14 +57,17 @@ var defaultProfile = Profile{
 // renderError renders the error template and writes the given HTTP status code.
 // If template rendering itself fails, it falls back to a plain-text response.
 func renderError(w http.ResponseWriter, templatesDir string, code int, message string) {
-	tmpl, err := template.ParseGlob(filepath.Join(templatesDir, "*.html"))
+	tmpl, err := template.ParseFiles(
+		filepath.Join(templatesDir, "base.html"),
+		filepath.Join(templatesDir, "error.html"),
+	)
 	if err != nil {
 		http.Error(w, message, code)
 		return
 	}
 	w.WriteHeader(code)
-	if err := tmpl.ExecuteTemplate(w, "error.html", ErrorData{Code: code, Message: message}); err != nil {
-		log.Printf("renderError: execute error.html: %v", err)
+	if err := tmpl.ExecuteTemplate(w, "base.html", ErrorData{Code: code, Message: message}); err != nil {
+		log.Printf("renderError: execute base.html: %v", err)
 	}
 }
 
@@ -111,8 +114,10 @@ func IndexHandler(postsDir, templatesDir string) http.HandlerFunc {
 	postsDir = resolvePostsDir(postsDir)
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Parse templates on every request (hot-reload for development).
-		tmpl, err := template.ParseGlob(filepath.Join(templatesDir, "*.html"))
+		tmpl, err := template.ParseFiles(
+			filepath.Join(templatesDir, "base.html"),
+			filepath.Join(templatesDir, "index.html"),
+		)
 		if err != nil {
 			log.Printf("IndexHandler: parse templates: %v", err)
 			renderError(w, templatesDir, http.StatusInternalServerError, "模板加载失败")
@@ -152,8 +157,8 @@ func IndexHandler(postsDir, templatesDir string) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := tmpl.ExecuteTemplate(w, "index.html", data); err != nil {
-			log.Printf("IndexHandler: execute index.html: %v", err)
+		if err := tmpl.ExecuteTemplate(w, "base.html", data); err != nil {
+			log.Printf("IndexHandler: execute base.html: %v", err)
 		}
 	}
 }
@@ -171,7 +176,10 @@ func PostHandler(postsDir, templatesDir string) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Parse templates on every request (hot-reload for development).
-		tmpl, err := template.ParseGlob(filepath.Join(templatesDir, "*.html"))
+		tmpl, err := template.ParseFiles(
+			filepath.Join(templatesDir, "base.html"),
+			filepath.Join(templatesDir, "post.html"),
+		)
 		if err != nil {
 			log.Printf("PostHandler: parse templates: %v", err)
 			renderError(w, templatesDir, http.StatusInternalServerError, "模板加载失败")
@@ -209,8 +217,8 @@ func PostHandler(postsDir, templatesDir string) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := tmpl.ExecuteTemplate(w, "post.html", data); err != nil {
-			log.Printf("PostHandler: execute post.html: %v", err)
+		if err := tmpl.ExecuteTemplate(w, "base.html", data); err != nil {
+			log.Printf("PostHandler: execute base.html: %v", err)
 		}
 	}
 }
