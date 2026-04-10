@@ -124,14 +124,24 @@
     <script>
     // ========== 歌单配置（可自定义替换） ==========
     const MP_PLAYLIST = [
-        { title: "Chill Lo-fi Study",   artist: "Free BGM", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-        { title: "Ambient Flow",         artist: "Free BGM", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-        { title: "Light Piano",          artist: "Free BGM", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+        { title: "Coverless book (Lofi)", artist: "Lesfm · Pixabay", src: "https://cdn.pixabay.com/audio/2023/01/10/audio_186307.mp3" },
+        { title: "Ambient Flow",          artist: "Free BGM",         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+        { title: "Light Piano",           artist: "Free BGM",         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
     ];
     // ================================================
 
     let mpIdx = 0, mpLooping = false, mpOpen = false;
     const audio = document.getElementById('mp-audio');
+
+    // 页面加载后预加载第一首，等待用户首次交互后自动播放
+    window.addEventListener('DOMContentLoaded', () => { mpLoad(0); });
+    let mpAutoPlayed = false;
+    document.addEventListener('click', () => {
+        if (!mpAutoPlayed) {
+            mpAutoPlayed = true;
+            audio.play().catch(() => {});
+        }
+    }, { once: true });
 
     function mpToggle() {
         mpOpen = !mpOpen;
