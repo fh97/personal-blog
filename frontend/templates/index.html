@@ -1,0 +1,138 @@
+{{define "title"}}{{if .ActiveTag}}#{{.ActiveTag}} - {{end}}{{.Profile.Name}} 的博客{{end}}
+
+{{define "content"}}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-indigo-600 via-purple-600 to-purple-800 text-white py-20 px-4">
+    <div class="max-w-3xl mx-auto flex flex-col items-center text-center">
+        <!-- Avatar placeholder -->
+        <div class="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center mb-5 ring-4 ring-white/30 shadow-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-white/80" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+        </div>
+        <!-- Name -->
+        <h1 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow">{{.Profile.Name}}</h1>
+        <!-- Bio -->
+        <p class="text-lg text-indigo-100 mb-6 max-w-md">{{.Profile.Bio}}</p>
+        <!-- Social links -->
+        <div class="flex gap-4">
+            {{if .Profile.GitHub}}
+            <a href="{{.Profile.GitHub}}" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2 bg-white/15 hover:bg-white/25 transition-colors px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.88 10.95.58.1.79-.25.79-.56v-2.02c-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.09-.12-.3-.51-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11.06 11.06 0 0 1 5.78 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.76.11 3.06.74.8 1.18 1.83 1.18 3.09 0 4.42-2.7 5.39-5.27 5.68.42.36.79 1.07.79 2.16v3.2c0 .31.2.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/>
+                </svg>
+                GitHub
+            </a>
+            {{end}}
+            {{if .Profile.Twitter}}
+            <a href="{{.Profile.Twitter}}" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2 bg-white/15 hover:bg-white/25 transition-colors px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                Twitter
+            </a>
+            {{end}}
+        </div>
+    </div>
+</section>
+
+<!-- Main content -->
+<main class="max-w-4xl mx-auto px-4 py-10">
+
+    <!-- Tag Filter -->
+    <div class="mb-8">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-3">按标签筛选</h2>
+        <div class="flex flex-wrap gap-2">
+            <!-- "全部" button -->
+            <a href="/"
+               class="px-4 py-1.5 rounded-full text-sm font-medium transition-all
+               {{if not .ActiveTag}}bg-indigo-600 text-white shadow-md shadow-indigo-200{{else}}bg-gray-100 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600{{end}}">
+                全部
+            </a>
+            <!-- Tag buttons -->
+            {{range .Tags}}
+            <a href="/?tag={{.}}"
+               class="px-4 py-1.5 rounded-full text-sm font-medium transition-all
+               {{if eq . $.ActiveTag}}bg-indigo-600 text-white shadow-md shadow-indigo-200{{else}}bg-gray-100 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600{{end}}">
+                # {{.}}
+            </a>
+            {{end}}
+        </div>
+    </div>
+
+    <!-- Post count -->
+    <div class="mb-5 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-gray-800">
+            {{if .ActiveTag}}
+                <span class="text-indigo-600"># {{.ActiveTag}}</span> 下的文章
+            {{else}}
+                全部文章
+            {{end}}
+        </h2>
+        <span class="text-sm text-gray-400">共 {{len .Posts}} 篇</span>
+    </div>
+
+    <!-- Post list grid -->
+    {{if .Posts}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {{range .Posts}}
+        <article class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-100 overflow-hidden group">
+            <div class="p-6">
+                <!-- Date -->
+                <time class="text-xs font-medium text-indigo-400 uppercase tracking-wide">
+                    {{.Date.Format "2006-01-02"}}
+                </time>
+                <!-- Title -->
+                <h3 class="mt-2 text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors leading-snug">
+                    <a href="/post/{{.Slug}}" class="stretched-link">{{.Title}}</a>
+                </h3>
+                <!-- Summary -->
+                {{if .Summary}}
+                <p class="mt-2 text-sm text-gray-500 line-clamp-3 leading-relaxed">{{.Summary}}</p>
+                {{end}}
+                <!-- Tags -->
+                {{if .Tags}}
+                <div class="mt-4 flex flex-wrap gap-1.5">
+                    {{range .Tags}}
+                    <a href="/?tag={{.}}"
+                       class="inline-block px-2.5 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-full hover:bg-indigo-100 transition-colors">
+                        # {{.}}
+                    </a>
+                    {{end}}
+                </div>
+                {{end}}
+                <!-- Read more -->
+                <div class="mt-4 pt-4 border-t border-gray-50">
+                    <a href="/post/{{.Slug}}"
+                       class="text-sm font-medium text-indigo-600 hover:text-purple-600 transition-colors inline-flex items-center gap-1">
+                        阅读全文
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </article>
+        {{end}}
+    </div>
+    {{else}}
+    <!-- Empty state -->
+    <div class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+        </div>
+        <p class="text-gray-400 text-lg font-medium">暂无文章</p>
+        <p class="text-gray-300 text-sm mt-1">该标签下还没有文章，<a href="/" class="text-indigo-400 hover:underline">查看全部</a></p>
+    </div>
+    {{end}}
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-gray-100 mt-16 py-8 text-center text-sm text-gray-400">
+    <p>© 2026 {{.Profile.Name}} · Powered by Go &amp; Tailwind CSS</p>
+</footer>
+{{end}}
