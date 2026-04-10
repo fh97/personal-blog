@@ -124,9 +124,9 @@
     <script>
     // ========== 歌单配置（可自定义替换） ==========
     const MP_PLAYLIST = [
-        { title: "Coverless book (Lofi)", artist: "Lesfm · Pixabay", src: "https://cdn.pixabay.com/audio/2023/01/10/audio_186307.mp3" },
-        { title: "Ambient Flow",          artist: "Free BGM",         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-        { title: "Light Piano",           artist: "Free BGM",         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+        { title: "Lo-fi Type Beat - Rain", artist: "Free BGM · Archive.org", src: "https://archive.org/download/kalaido-hanging-lanterns_202101/%28FREE%29%20Lo-fi%20Type%20Beat%20-%20Rain.mp3" },
+        { title: "Hanging Lanterns",       artist: "Kalaido · Archive.org",  src: "https://archive.org/download/kalaido-hanging-lanterns_202101/Kalaido%20-%20Hanging%20Lanterns.mp3" },
+        { title: "First Snow",             artist: "Kerusu · Archive.org",   src: "https://archive.org/download/kalaido-hanging-lanterns_202101/Kerusu%20-%20First%20Snow.mp3" },
     ];
     // ================================================
 
@@ -201,7 +201,7 @@
         document.getElementById('mp-toggle').textContent = '🎵';
         mpDiscSpin(false);
     });
-    audio.addEventListener('ended', () => { if (!mpLooping) mpNext(); audio.play(); });
+    audio.addEventListener('ended', () => { if (!mpLooping) { mpNext(); audio.play(); } });
 
     let discAngle = 0, discRaf = null;
     function mpDiscSpin(on) {
