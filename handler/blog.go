@@ -49,7 +49,7 @@ type ErrorData struct {
 // defaultProfile is the hard-coded blog owner profile.
 var defaultProfile = Profile{
 	Name:    "fh97",
-	Bio:     "百度工程师，喜欢 Go 和折腾工具",
+	Bio:     "开发小菜鸡，喜欢 Go 和折腾工具",
 	GitHub:  "https://github.com/fh97",
 	Twitter: "",
 }
