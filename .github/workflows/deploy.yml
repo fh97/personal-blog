@@ -52,23 +52,21 @@ jobs:
           curl -sf http://localhost:8300/ > ./public/index.html
 
           # 抓取各标签页
-          for tag in Go Git "工程效能" "最佳实践" "版本控制"; do
+          for tag in Go Blog Web Git AI Spec "工程效能" "最佳实践" "版本控制"; do
             encoded=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$tag'))")
             curl -sf "http://localhost:8300/?tag=${encoded}" > "./public/index-tag-${tag}.html" || true
           done
 
-          # 抓取所有文章详情页
-          mkdir -p ./public/post
+          # 抓取所有文章详情页，存为 post/{slug}/index.html（让 /post/slug 路径可访问）
           for slug in build-blog-with-go spec-driven-development go-error-handling git-knowledge-guide; do
-            curl -sf "http://localhost:8300/post/${slug}" > "./public/post/${slug}.html" || true
+            mkdir -p "./public/post/${slug}"
+            curl -sf "http://localhost:8300/post/${slug}" > "./public/post/${slug}/index.html" || true
           done
 
           kill $SERVER_PID || true
 
-          # 创建 .nojekyll 防止 GitHub Pages 忽略下划线开头的目录
           touch ./public/.nojekyll
 
-          # 输出文件大小，便于 debug
           echo "=== Generated files ==="
           find ./public -name "*.html" | xargs wc -l 2>/dev/null
 
