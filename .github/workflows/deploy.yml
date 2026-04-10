@@ -1,0 +1,67 @@
+name: Deploy Blog to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      - name: Build blog server
+        run: |
+          rm -f go.sum
+          go mod tidy
+          go build -o blog-server .
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+          GONOSUMDB: '*'
+          GOFLAGS: '-mod=mod'
+
+      - name: Generate static files
+        run: |
+          ./blog-server &
+          SERVER_PID=$!
+          sleep 3
+
+          mkdir -p ./public
+
+          # 抓取首页和各标签页
+          wget --mirror --convert-links --adjust-extension \
+               --page-requisites --no-parent \
+               --no-host-directories \
+               --directory-prefix=./public \
+               http://localhost:8300/ || true
+
+          # 抓取所有文章详情页
+          for slug in build-blog-with-go spec-driven-development go-error-handling git-knowledge-guide; do
+            wget --convert-links --adjust-extension \
+                 --no-host-directories \
+                 --directory-prefix=./public \
+                 http://localhost:8300/post/$slug || true
+          done
+
+          kill $SERVER_PID || true
+
+          # 创建 .nojekyll 防止 GitHub Pages 忽略下划线开头的目录
+          touch ./public/.nojekyll
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          force_orphan: true
